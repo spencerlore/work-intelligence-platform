@@ -54,18 +54,6 @@ The prototype also demonstrates the optional email/text capture, reviewed determ
 - **Saved views:** risk, Fund II, and operations agenda shortcuts are live rather than decorative
 - Responsive desktop, tablet, and mobile layouts
 
-## Suggested interview walkthrough
-
-1. Start on **My work** and explain that attention state, not a generic list, drives the home view.
-2. Open the financial-statement task to show ownership, status, blocker, email, document, and contextual notes.
-3. Create a delegated task for Alex, then switch to Alex’s workspace to show that it enters the assignee’s own queue.
-4. Open **2026 Fund II Audit** to demonstrate multi-step project progress and risk.
-5. Use **Capture from email**, review the inferred candidate, and create it.
-6. Open **Agendas** and promote a discussion topic to a task.
-7. Complete **Complete monthly reporting process** to show the September 30 recurring occurrence.
-8. Search for `Q2 Financial Statements.pdf` or ask `What am I waiting for?`.
-9. Reset demo data before the next walkthrough.
-
 ## Data model
 
 The local state mirrors entities that would remain separate in production:
