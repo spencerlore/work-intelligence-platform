@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <meta name="description" content="Nimble Partners work intelligence pilot">
+  <title>Nimble | Work intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><img class="brand-mark" src="assets/nimble-logo.png" alt="Nimble logo"><span>Nimble</span><span class="pilot-badge">PILOT</span></div>
+      <div class="workspace-wrap">
+        <button class="workspace-switcher" id="person-switcher" aria-expanded="false" aria-controls="person-menu">
+          <span class="avatar avatar-moss" id="workspace-initials">SP</span>
+          <span><strong id="workspace-person">Spencer</strong><small>Personal workspace</small></span><span class="chevron">⌄</span>
+        </button>
+        <div class="person-menu hidden" id="person-menu" role="menu" aria-label="Switch workspace"></div>
+      </div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="my-work"><span class="nav-icon">◈</span> My work <b id="my-work-count">0</b></button>
+        <button class="nav-item" data-view="delegated"><span class="nav-icon">↗</span> Delegated <b id="delegated-count">0</b></button>
+        <button class="nav-item" data-view="waiting"><span class="nav-icon">◷</span> Waiting on <b id="waiting-count">0</b></button>
+        <button class="nav-item" data-view="projects"><span class="nav-icon">▦</span> Projects <b id="project-count">0</b></button>
+        <button class="nav-item" data-view="agendas"><span class="nav-icon">☷</span> Agendas <b id="agenda-count">0</b></button>
+        <button class="nav-item" data-view="ideas"><span class="nav-icon">✦</span> Ideas <b id="idea-count">0</b></button>
+      </nav>
+      <div class="sidebar-section">
+        <div class="section-label">Saved views <span class="local-label">LOCAL</span></div>
+        <button class="saved-view" data-saved-view="at-risk"><span class="view-dot coral"></span> At risk this week <span id="saved-risk-count">0</span></button>
+        <button class="saved-view" data-saved-view="fund-ii"><span class="view-dot blue"></span> Fund II <span id="saved-fund-count">0</span></button>
+        <button class="saved-view" data-saved-view="operations"><span class="view-dot gold"></span> Operations meeting <span id="saved-agenda-count">0</span></button>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sync-status"><span class="status-pulse"></span><span><strong>Local pilot workspace</strong><small id="save-status">Saved in this browser</small></span></div>
+        <button class="help-button" id="quick-tour">? <span>How this pilot works</span></button>
+        <button class="reset-button" id="reset-demo">↺ Reset demo data</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb" id="breadcrumb">Workspace <span>/</span> My work</div>
+        <div class="top-actions">
+          <button class="top-action-label" id="email-import-button" title="Paste an email or note">✦ Capture from email</button>
+          <button class="icon-button" title="Search or ask Nimble" id="search-toggle" aria-label="Search">⌕</button>
+          <button class="icon-button notification-button" title="Notifications" id="notifications-toggle" aria-label="Notifications">♧<i id="notification-dot"></i></button>
+          <div class="avatar avatar-plum" id="topbar-initials">SP</div>
+        </div>
+        <section class="notifications hidden" id="notifications" aria-label="Attention alerts"></section>
+      </header>
+
+      <div class="search-row hidden" id="search-row">
+        <span>⌕</span>
+        <input id="search-input" placeholder="Search work, sources, people — or ask “What am I waiting for?”" autocomplete="off">
+        <button class="search-clear" id="clear-search" title="Clear search">Esc</button>
+        <div class="search-results hidden" id="search-results"></div>
+      </div>
+
+      <section class="page-head" id="page-head"></section>
+      <section id="view-content" class="view-content" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="item-modal-backdrop">
+    <section class="modal item-modal" role="dialog" aria-modal="true" aria-labelledby="item-modal-title">
+      <div class="modal-header"><div><p class="eyebrow" id="item-modal-kicker">Capture work with context</p><h2 id="item-modal-title">Create a new item</h2></div><button class="close-button" data-close-modal="item-modal-backdrop" aria-label="Close">×</button></div>
+      <form id="item-form">
+        <input type="hidden" name="id">
+        <label>What needs doing?<input name="title" required maxlength="160" placeholder="e.g. Review Q2 financial statements"></label>
+        <div class="form-grid three">
+          <label>Work type<select name="type" id="item-type"><option value="personal">Personal task</option><option value="delegated">Delegate to someone</option><option value="waiting">Waiting on someone</option><option value="idea">Future idea</option></select></label>
+          <label>Owner<select name="owner" id="item-owner"></select></label>
+          <label>Status<select name="status" id="item-status"><option value="not_started">Not started</option><option value="in_progress">In progress</option><option value="waiting">Waiting</option><option value="completed">Completed</option><option value="parked">Parked</option></select></label>
+        </div>
+        <div class="form-grid three">
+          <label>Project<select name="projectId" id="item-project"></select></label>
+          <label>Due date<input type="date" name="dueDate"></label>
+          <label>Priority<select name="priority"><option value="critical">Critical</option><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></label>
+        </div>
+        <div class="form-grid two">
+          <label>Recurrence<select name="recurrence"><option value="none">Does not repeat</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="monthly_last_business_day">Monthly — last business day</option></select></label>
+          <label>Dependency / blocker<input name="dependency" maxlength="160" placeholder="e.g. Updated valuation support"></label>
+        </div>
+        <fieldset class="conditional-fields" id="waiting-fields"><legend>Follow-up details</legend><div class="form-grid three"><label>Waiting on<input name="waitingOn" maxlength="80" placeholder="e.g. Fund Administrator"></label><label>Requested<input type="date" name="requestedDate"></label><label>Follow up<input type="date" name="followUpDate"></label></div></fieldset>
+        <fieldset class="conditional-fields" id="delegated-fields"><legend>Delegation details</legend><div class="form-grid two"><label>Assigned by<input name="assignedBy" id="assigned-by" readonly></label><label>Last followed up<input type="date" name="lastFollowUp"></label></div></fieldset>
+        <fieldset class="source-fields"><legend>Source &amp; context <span>Keep a traceable link to the originating work.</span></legend><div class="form-grid two"><label>Source type<select name="sourceType"><option value="note">Note</option><option value="email">Email</option><option value="document">Document</option><option value="meeting">Meeting / agenda</option><option value="spreadsheet">Spreadsheet / system</option></select></label><label>Source label<input name="sourceLabel" maxlength="160" placeholder="e.g. Q2 Financial Statements.pdf"></label></div><label>Context or notes<textarea name="context" rows="3" maxlength="1000" placeholder="Paste an excerpt, explain the next step, or add a reliable reference..."></textarea></label></fieldset>
+        <div class="form-footer"><span class="form-hint" id="item-form-hint">Saved locally with its source context</span><div class="form-actions"><button type="button" class="danger-button hidden" id="delete-item-button">Delete</button><button type="button" class="secondary-button" data-close-modal="item-modal-backdrop">Cancel</button><button class="primary-button" type="submit" id="item-submit">Create item <span>→</span></button></div></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop hidden" id="project-modal-backdrop">
+    <section class="modal project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+      <div class="modal-header"><div><p class="eyebrow">A shared container for multi-step work</p><h2 id="project-modal-title">Create a project</h2></div><button class="close-button" data-close-modal="project-modal-backdrop" aria-label="Close">×</button></div>
+      <form id="project-form"><input type="hidden" name="id"><label>Project name<input name="name" required maxlength="100" placeholder="e.g. 2026 Fund II Audit"></label><div class="form-grid three"><label>Project owner<select name="owner" id="project-owner"></select></label><label>Target date<input type="date" name="deadline"></label><label>Health<select name="status"><option value="on_track">On track</option><option value="at_risk">At risk</option><option value="blocked">Blocked</option></select></label></div><label>Purpose / scope<textarea name="description" rows="3" maxlength="700" placeholder="What outcome does this project need to produce?"></textarea></label><div class="form-footer"><span class="form-hint">Task progress is calculated from linked work.</span><div class="form-actions"><button type="button" class="danger-button hidden" id="delete-project-button">Delete</button><button type="button" class="secondary-button" data-close-modal="project-modal-backdrop">Cancel</button><button class="primary-button" type="submit" id="project-submit">Create project <span>→</span></button></div></div></form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop hidden" id="email-modal-backdrop">
+    <section class="modal email-modal" role="dialog" aria-modal="true" aria-labelledby="email-modal-title">
+      <div class="modal-header"><div><p class="eyebrow">Review before anything becomes work</p><h2 id="email-modal-title">Capture from email or text</h2></div><button class="close-button" data-close-modal="email-modal-backdrop" aria-label="Close">×</button></div>
+      <p class="modal-intro">Paste an email, meeting note, or message. Nimble creates a <strong>local candidate</strong>; you review it before it is saved.</p>
+      <label class="email-input-label">Message text<textarea id="email-text" rows="8">Attached are the Q2 financial statements for Fund II. Please review and send us any comments by Friday. We are still waiting on updated valuation support from the investment team. Q2 Financial Statements.pdf</textarea></label>
+      <div class="email-actions"><button class="secondary-button" id="email-use-sample" type="button">Use sample</button><button class="primary-button" id="email-parse" type="button">Find candidate work <span>→</span></button></div>
+      <div class="extraction-note">◌ Local rules only in this pilot — no external email data is sent anywhere.</div>
+      <section class="candidate hidden" id="email-candidate"></section>
+    </section>
+  </div>
+
+  <div class="modal-backdrop hidden" id="agenda-modal-backdrop">
+    <section class="modal agenda-modal" role="dialog" aria-modal="true" aria-labelledby="agenda-modal-title">
+      <div class="modal-header"><div><p class="eyebrow">Keep discussion topics close to follow-through</p><h2 id="agenda-modal-title">Add agenda item</h2></div><button class="close-button" data-close-modal="agenda-modal-backdrop" aria-label="Close">×</button></div>
+      <form id="agenda-form"><input type="hidden" name="agendaId"><label>Discussion topic<input name="title" required maxlength="160" placeholder="e.g. Fund audit status"></label><div class="form-grid two"><label>Related project<select name="projectId" id="agenda-project"></select></label><label>Owner / discuss with<select name="owner" id="agenda-owner"></select></label></div><label>Notes<input name="notes" maxlength="300" placeholder="Why it belongs on this agenda"></label><div class="form-footer"><span class="form-hint">You can promote it to a task after the meeting.</span><div class="form-actions"><button type="button" class="secondary-button" data-close-modal="agenda-modal-backdrop">Cancel</button><button class="primary-button" type="submit">Add item <span>→</span></button></div></div></form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop hidden" id="tour-modal-backdrop">
+    <section class="modal tour-modal" role="dialog" aria-modal="true" aria-labelledby="tour-modal-title">
+      <div class="modal-header"><div><p class="eyebrow">Pilot guide</p><h2 id="tour-modal-title">A single place to decide what matters next</h2></div><button class="close-button" data-close-modal="tour-modal-backdrop" aria-label="Close">×</button></div>
+      <ol class="tour-list"><li><strong>Capture reliably.</strong> Create work manually or paste a message. Every item can retain a source and context.</li><li><strong>Route ownership.</strong> Personal, delegated, and waiting work are separate attention states — not just labels.</li><li><strong>Review risk.</strong> The home view exposes overdue work, next-three-day commitments, waiting follow-ups, and delegation health.</li><li><strong>Close the loop.</strong> Edit status, record follow-ups, complete recurring work, promote an agenda item, or turn an idea into a task.</li></ol>
+      <div class="tour-callout">This is a browser-local pilot. The README describes how the same model evolves into an authenticated, source-of-truth-backed system.</div>
+      <div class="form-footer"><span></span><button class="primary-button" data-close-modal="tour-modal-backdrop">Start exploring <span>→</span></button></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
